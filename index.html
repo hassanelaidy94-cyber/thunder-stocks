@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ثاندر ستوكس</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f0b429">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ثاندر ستوكس">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d45;
+    --gold: #f0b429;
+    --gold-dim: #7a5c14;
+    --green: #10d98a;
+    --red: #f04060;
+    --blue: #3b82f6;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #f0b429;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0a0e1a 0%, #111827 50%, #0d1929 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--gold), #c88a1a);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .logo-text { font-size: 20px; font-weight: 900; color: var(--gold); }
+  .logo-sub  { font-size: 11px; color: var(--muted); font-weight: 400; }
+
+  .header-stats {
+    display: flex; gap: 24px;
+  }
+
+  .hstat {
+    text-align: center;
+  }
+  .hstat-val { font-size: 18px; font-weight: 700; }
+  .hstat-lbl { font-size: 10px; color: var(--muted); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    background: #1a1200;
+    border: 1px solid var(--gold-dim);
+    border-radius: 10px;
+    padding: 10px 18px;
+    margin: 20px 32px;
+    font-size: 12px;
+    color: #c8960a;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── FILTERS ── */
+  .filters {
+    padding: 16px 32px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--gold);
+    color: #000;
+    border-color: var(--gold);
+    font-weight: 700;
+  }
+
+  input#search {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    width: 180px;
+    margin-right: auto;
+  }
+  input#search:focus { outline: none; border-color: var(--gold); }
+  input#search::placeholder { color: var(--muted); }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    padding: 0 32px 32px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 3px; height: 100%;
+  }
+  .card.bull::before { background: var(--green); }
+  .card.bear::before { background: var(--red); }
+  .card.neutral::before { background: var(--muted); }
+  .card:hover { transform: translateY(-2px); border-color: var(--gold-dim); }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .ticker {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  .sector-tag {
+    font-size: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 8px;
+    color: var(--muted);
+  }
+
+  .company-name {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  /* Signal badge */
+  .signal {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .signal.buy  { background: rgba(16,217,138,0.12); color: var(--green); border: 1px solid rgba(16,217,138,0.3); }
+  .signal.sell { background: rgba(240,64,96,0.12);  color: var(--red);   border: 1px solid rgba(240,64,96,0.3); }
+  .signal.hold { background: rgba(100,116,139,0.15);color: #94a3b8;      border: 1px solid rgba(100,116,139,0.3); }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .stat-box {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+  }
+  .stat-label { font-size: 9px; color: var(--muted); margin-bottom: 2px; }
+  .stat-val   { font-size: 13px; font-weight: 700; }
+  .stat-val.up   { color: var(--green); }
+  .stat-val.down { color: var(--red); }
+  .stat-val.neutral { color: #94a3b8; }
+
+  /* Progress bar */
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .bar-track {
+    flex: 1;
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s;
+  }
+  .bar-fill.bull { background: linear-gradient(90deg, #10d98a, #00ff99); }
+  .bar-fill.bear { background: linear-gradient(90deg, #f04060, #ff2050); }
+  .bar-fill.hold { background: linear-gradient(90deg, #475569, #64748b); }
+
+  /* Analysis text */
+  .analysis {
+    font-size: 11.5px;
+    color: #94a3b8;
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+
+  /* Targets */
+  .targets {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .target-box {
+    flex: 1;
+    border-radius: 8px;
+    padding: 6px 8px;
+    text-align: center;
+    font-size: 10px;
+  }
+  .target-box.support { background: rgba(240,64,96,0.08); border: 1px solid rgba(240,64,96,0.2); }
+  .target-box.resist  { background: rgba(16,217,138,0.08); border: 1px solid rgba(16,217,138,0.2); }
+  .target-box .tb-lbl { color: var(--muted); margin-bottom: 2px; }
+  .target-box.support .tb-val { color: var(--red); font-weight: 700; font-size: 12px; }
+  .target-box.resist  .tb-val { color: var(--green); font-weight: 700; font-size: 12px; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+  }
+
+  .hidden { display: none !important; }
+
+  /* ── CARD FOOTER ── */
+  .card-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .price-lbl { font-size: 11px; color: var(--muted); }
+  .price-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+    width: 110px;
+    text-align: center;
+    direction: ltr;
+  }
+  .price-input:focus { outline: none; border-color: var(--gold); }
+  .price-input::placeholder { color: var(--muted); font-size: 11px; }
+
+  .links-row {
+    display: flex;
+    gap: 6px;
+  }
+  .egx-btn, .tv-btn {
+    flex: 1;
+    text-align: center;
+    padding: 6px 4px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    font-family: 'Cairo', sans-serif;
+    transition: opacity 0.2s;
+  }
+  .egx-btn { background: rgba(240,180,41,0.15); color: var(--gold); border: 1px solid rgba(240,180,41,0.3); }
+  .tv-btn  { background: rgba(59,130,246,0.15);  color: #60a5fa;    border: 1px solid rgba(59,130,246,0.3); }
+  .egx-btn:hover, .tv-btn:hover { opacity: 0.75; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <div class="logo-text">ثاندر ستوكس</div>
+      <div class="logo-sub">تحليل البورصة المصرية</div>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat">
+      <div class="hstat-val" style="color:var(--green)" id="bull-count">—</div>
+      <div class="hstat-lbl">توقع صعود</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val" style="color:var(--red)" id="bear-count">—</div>
+      <div class="hstat-lbl">توقع هبوط</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val" style="color:#94a3b8" id="hold-count">—</div>
+      <div class="hstat-lbl">محايد</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val" style="color:var(--gold)" id="total-count">—</div>
+      <div class="hstat-lbl">إجمالي الأسهم</div>
+    </div>
+  </div>
+</header>
+
+<div class="disclaimer">
+  ⚠️ <strong>تنبيه:</strong> هذه التحليلات تعليمية بحتة وليست توصية بالشراء أو البيع. الاستثمار في الأسهم ينطوي على مخاطر. استشر مستشاراً مالياً مرخصاً قبل اتخاذ أي قرار.
+</div>
+
+<div class="filters">
+  <input id="search" type="text" placeholder="🔍 ابحث عن سهم..." oninput="filterCards()">
+  <button class="filter-btn active" onclick="filterBy('all', this)">الكل</button>
+  <button class="filter-btn" onclick="filterBy('buy', this)">🟢 صعود</button>
+  <button class="filter-btn" onclick="filterBy('sell', this)">🔴 هبوط</button>
+  <button class="filter-btn" onclick="filterBy('hold', this)">⚪ محايد</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  ⚡ داشبورد ثاندر | البورصة المصرية | التحليل تعليمي فقط — ليس توصية استثمارية<br>
+  تاريخ التحليل: يونيو 2025
+</footer>
+
+<script>
+const stocks = [
+  { ticker:'COMI', name:'التجاري الدولي — CIB', sector:'بنوك', signal:'buy', conf:82, support:'72.50', resist:'89.00', change:'+1.8%', rsi:55, analysis:'بنك راسخ وأرباح منتظمة. الدعم القوي عند 72 والمقاومة 89. مؤشر RSI متوازن يدعم الصعود المحتمل على المدى المتوسط.' },
+  { ticker:'HRHO', name:'هيرميس القابضة', sector:'مال', signal:'buy', conf:74, support:'18.50', resist:'23.00', change:'+0.9%', rsi:52, analysis:'شركة مالية رائدة. الأداء مرتبط بنشاط الأسواق. كسر مستوى 21 يفتح الطريق نحو 23.' },
+  { ticker:'FWRY', name:'فوري للدفع الإلكتروني', sector:'تقنية', signal:'buy', conf:78, support:'9.80', resist:'13.50', change:'+2.1%', rsi:58, analysis:'قطاع المدفوعات الرقمية في نمو. فوري تستفيد من التوجه لتقليل النقد. هدف محتمل 13.50.' },
+  { ticker:'SWDY', name:'السويدي إليكتريك', sector:'صناعة', signal:'hold', conf:55, support:'14.00', resist:'17.50', change:'-0.5%', rsi:48, analysis:'سهم صناعي دفاعي. أداء مستقر نسبياً. ينتظر محفزاً لكسر نطاق الترقب الحالي.' },
+  { ticker:'ETEL', name:'المصرية للاتصالات', sector:'اتصالات', signal:'hold', conf:60, support:'11.00', resist:'14.00', change:'-0.3%', rsi:46, analysis:'شركة حكومية مستقرة توزع أرباحاً منتظمة. الأداء محدود لكن المخاطرة منخفضة.' },
+  { ticker:'ORAS', name:'أوراسكوم للتشييد', sector:'تشييد', signal:'buy', conf:70, support:'38.00', resist:'48.00', change:'+1.2%', rsi:54, analysis:'قطاع البناء يستفيد من مشاريع الدولة الكبرى. أوراسكوم بمشاريع خارجية داعمة.' },
+  { ticker:'ORHD', name:'أوراسكوم للتنمية', sector:'عقارات', signal:'hold', conf:50, support:'22.00', resist:'28.00', change:'-1.0%', rsi:44, analysis:'يعتمد على السياحة والعقار. السياحة في تعافٍ لكن البيع الضغط قائم قريباً.' },
+  { ticker:'CICH', name:'المصرية الصينية للزجاج', sector:'صناعة', signal:'hold', conf:52, support:'4.50', resist:'6.00', change:'-0.8%', rsi:43, analysis:'أداء متذبذب. يحتاج تحسن الطلب المحلي لكسر المقاومة. الانتظار أحكم.' },
+  { ticker:'EFGH', name:'EFG القابضة', sector:'مال', signal:'buy', conf:72, support:'17.00', resist:'22.00', change:'+1.5%', rsi:56, analysis:'مجموعة مالية متنوعة. التوسع في الخدمات المالية الرقمية يدعم الصعود على المدى المتوسط.' },
+  { ticker:'EAST', name:'إيست للأدوية', sector:'أدوية', signal:'buy', conf:76, support:'55.00', resist:'68.00', change:'+0.7%', rsi:57, analysis:'قطاع الدواء دفاعي وداعم. الأدوية المحلية تستفيد من الدولرة. نمو منتظر.' },
+  { ticker:'ABUK', name:'أبوقير للأسمدة', sector:'كيماويات', signal:'buy', conf:80, support:'48.00', resist:'60.00', change:'+2.0%', rsi:60, analysis:'أسعار الغاز المنخفضة تدعم هامش الربح. توزيع أرباح مميز. من الأسهم المفضلة للمستثمر.' },
+  { ticker:'EGCH', name:'القاهرة للإسكان', sector:'عقارات', signal:'hold', conf:50, support:'3.20', resist:'4.50', change:'-1.2%', rsi:42, analysis:'قطاع الإسكان الاجتماعي. هوامش محدودة. الاستقرار السعري قبل أي حركة.' },
+  { ticker:'AMOC', name:'أنابيب البترول', sector:'بترول', signal:'buy', conf:75, support:'5.80', resist:'7.50', change:'+1.3%', rsi:55, analysis:'شركة خدمات بترول شبه احتكارية. تدفق نقدي منتظم ومخاطرة منخفضة نسبياً.' },
+  { ticker:'PHDC', name:'بالم هيلز', sector:'عقارات', signal:'buy', conf:73, support:'2.80', resist:'3.80', change:'+1.8%', rsi:56, analysis:'مطور عقاري مع مشاريع متعددة. ارتفاع الطلب على الوحدات المتوسطة داعم للسهم.' },
+  { ticker:'TMGH', name:'مجموعة طلعت مصطفى', sector:'عقارات', signal:'buy', conf:77, support:'28.00', resist:'36.00', change:'+2.2%', rsi:59, analysis:'من أبرز المطورين العقاريين. مشروع مدينتي والعاصمة الإدارية يدعم النمو طويل الأمد.' },
+  { ticker:'MFPC', name:'بنك المصرف المتحد', sector:'بنوك', signal:'hold', conf:55, support:'8.50', resist:'11.00', change:'-0.4%', rsi:46, analysis:'بنك متوسط. الربحية تتحسن تدريجياً لكن يحتاج وقتاً لكسر مستويات أعلى.' },
+  { ticker:'ISPH', name:'إيبيفارم للصناعات الدوائية', sector:'أدوية', signal:'buy', conf:71, support:'6.20', resist:'8.00', change:'+0.9%', rsi:53, analysis:'طلب متنامٍ على الأدوية المصرية. تصدير متزايد يدعم الإيرادات بالدولار.' },
+  { ticker:'JUFO', name:'جهينة للأغذية', sector:'غذاء', signal:'hold', conf:58, support:'5.50', resist:'7.20', change:'-0.6%', rsi:47, analysis:'شركة استهلاكية دفاعية. أسعار المواد الخام ضغط على الهامش. أداء متوازن.' },
+  { ticker:'DOMT', name:'دومتي', sector:'غذاء', signal:'hold', conf:56, support:'4.80', resist:'6.50', change:'-0.7%', rsi:45, analysis:'منتجات الألبان تواجه ضغط تكاليف. هامش الربح محدود في ظل التضخم.' },
+  { ticker:'DSCW', name:'دلتا للصلب', sector:'معادن', signal:'sell', conf:65, support:'3.00', resist:'4.20', change:'-2.5%', rsi:38, analysis:'أسعار الصلب العالمية ضاغطة. الطلب المحلي لم يتعافَ بالكامل. ضغط بيعي مستمر.' },
+  { ticker:'ACGC', name:'العربية للحاويات', sector:'لوجستيات', signal:'hold', conf:54, support:'14.00', resist:'18.00', change:'-0.3%', rsi:48, analysis:'قطاع الشحن في تعافٍ بطيء. الموقع الجغرافي لمصر أصل استراتيجي.' },
+  { ticker:'ACAMD', name:'أكاديمية للاستثمار', sector:'تعليم', signal:'hold', conf:50, support:'12.00', resist:'16.00', change:'0.0%', rsi:49, analysis:'قطاع التعليم الخاص نامٍ. الطلب مرتفع لكن التنافسية عالية أيضاً.' },
+  { ticker:'ADIB', name:'مصرف أبوظبي الإسلامي', sector:'بنوك', signal:'buy', conf:74, support:'22.00', resist:'28.00', change:'+1.4%', rsi:55, analysis:'بنك إسلامي ينمو بسرعة في السوق المصري. صافي الفائدة الإسلامية داعم.' },
+  { ticker:'AFDI', name:'أفريقيا للاستثمار', sector:'مال', signal:'hold', conf:52, support:'6.00', resist:'8.00', change:'-0.5%', rsi:46, analysis:'شركة استثمارية متنوعة. الأداء مرتبط بحالة الأسواق بشكل عام.' },
+  { ticker:'AFMC', name:'أفريقيا للتمويل', sector:'مال', signal:'hold', conf:53, support:'5.50', resist:'7.50', change:'-0.4%', rsi:47, analysis:'خدمات تمويل متنوعة. نمو تدريجي لكن دون محفز قوي حالياً.' },
+  { ticker:'AIFI', name:'كايرو فاينانس', sector:'مال', signal:'hold', conf:50, support:'4.00', resist:'5.50', change:'0.0%', rsi:48, analysis:'أداء محايد. ينتظر البيانات المالية للربع القادم لتأكيد الاتجاه.' },
+  { ticker:'ALCN', name:'الكانون للمقاولات', sector:'تشييد', signal:'hold', conf:55, support:'3.50', resist:'4.80', change:'-0.6%', rsi:45, analysis:'مقاولات محلية. الطلب الحكومي محرك رئيسي. أداء مستقر في نطاق ضيق.' },
+  { ticker:'ALUM', name:'مصر للألومنيوم', sector:'معادن', signal:'buy', conf:68, support:'9.00', resist:'12.00', change:'+1.0%', rsi:52, analysis:'أسعار الألومنيوم العالمية داعمة. تصدير متزايد يدعم الإيرادات.' },
+  { ticker:'AMER', name:'أمريكان إيجيبت', sector:'مال', signal:'hold', conf:50, support:'5.00', resist:'6.80', change:'0.0%', rsi:48, analysis:'أداء محايد في نطاق عرضي. يحتاج محفزاً واضحاً للانطلاق.' },
+  { ticker:'AMIA', name:'أميا للنقل', sector:'نقل', signal:'hold', conf:54, support:'3.00', resist:'4.20', change:'-0.8%', rsi:44, analysis:'قطاع النقل يتأثر بأسعار الوقود. هامش الربح محدود في ظل ارتفاع التكاليف.' },
+  { ticker:'ANFI', name:'النهضة للتمويل', sector:'مال', signal:'hold', conf:52, support:'4.50', resist:'6.00', change:'-0.5%', rsi:46, analysis:'تمويل استهلاكي. الطلب متزايد لكن مخاطر القروض المتعثرة قائمة.' },
+  { ticker:'ARAB', name:'العربي للإنتاج الأوسط', sector:'صناعة', signal:'hold', conf:50, support:'3.00', resist:'4.00', change:'-0.3%', rsi:47, analysis:'أداء عام محدود. يحتاج إعادة تقييم استراتيجية لتحقيق نمو أفضل.' },
+  { ticker:'ARCC', name:'العربية للحفر', sector:'بترول', signal:'buy', conf:70, support:'7.00', resist:'9.50', change:'+1.2%', rsi:54, analysis:'قطاع الحفر مرتبط بأسعار النفط. الطلب على خدمات الحفر في تزايد مع ارتفاع أسعار النفط.' },
+  { ticker:'ASCM', name:'أسيك للجيولوجيا والتعدين', sector:'معادن', signal:'sell', conf:60, support:'55.00', resist:'68.00', change:'-2.25%', rsi:37, analysis:'ضغط بيعي واضح. التعدين يتأثر بأسعار المعادن العالمية وتكاليف الإنتاج.' },
+  { ticker:'ASPI', name:'أسبي للصناعات', sector:'صناعة', signal:'hold', conf:52, support:'3.20', resist:'4.50', change:'-0.6%', rsi:45, analysis:'صناعة متنوعة. الطلب المحلي الرئيسي بحاجة لتعافٍ لدعم السهم.' },
+  { ticker:'ATLC', name:'أطلنطك للتجارة', sector:'تجارة', signal:'hold', conf:50, support:'2.80', resist:'4.00', change:'-0.4%', rsi:47, analysis:'تجارة استيراد. يتأثر بسعر الصرف وتوافر العملة الأجنبية.' },
+  { ticker:'ATQA', name:'أتقياء للاستثمار', sector:'مال', signal:'hold', conf:50, support:'4.00', resist:'5.50', change:'0.0%', rsi:49, analysis:'أداء محايد. في انتظار أخبار محددة لتحريك السهم في اتجاه واضح.' },
+  { ticker:'AUTO', name:'غياث للسيارات', sector:'سيارات', signal:'sell', conf:62, support:'8.00', resist:'11.00', change:'-1.8%', rsi:40, analysis:'قطاع السيارات يعاني من ضعف الطلب وارتفاع أسعار الاستيراد وضغط سعر الصرف.' },
+  { ticker:'AXPH', name:'أكسيس للتمويل', sector:'مال', signal:'hold', conf:52, support:'5.00', resist:'7.00', change:'-0.5%', rsi:46, analysis:'تمويل متنوع. أداء متوسط. الانتظار حتى تتضح البيانات المالية القادمة.' },
+  { ticker:'BINV', name:'ب للاستثمار', sector:'مال', signal:'hold', conf:50, support:'3.50', resist:'5.00', change:'0.0%', rsi:48, analysis:'محفظة استثمارية متنوعة. الأداء يتبع حالة السوق الكلية.' },
+  { ticker:'BIOC', name:'بيوكيم للصناعات الدوائية', sector:'أدوية', signal:'buy', conf:72, support:'8.00', resist:'11.00', change:'+1.1%', rsi:55, analysis:'تصنيع دوائي متنامٍ. الطلب المحلي والتصدير يدعمان الإيرادات.' },
+  { ticker:'BTFH', name:'بيت التمويل', sector:'مال', signal:'hold', conf:53, support:'4.00', resist:'5.80', change:'-0.4%', rsi:47, analysis:'تمويل إسلامي. أداء متوسط مع نمو تدريجي في محفظة الائتمان.' },
+  { ticker:'CANA', name:'قناة للتأمين', sector:'تأمين', signal:'hold', conf:55, support:'6.00', resist:'8.50', change:'-0.3%', rsi:48, analysis:'تأمين متنوع. القطاع شهد نمواً مع التوسع في التغطية التأمينية.' },
+  { ticker:'CERA', name:'سيراميكا كليوباترا', sector:'مواد بناء', signal:'buy', conf:70, support:'7.50', resist:'10.00', change:'+0.8%', rsi:53, analysis:'مواد البناء تستفيد من مشاريع الإسكان الكبرى. صادرات متزايدة دعم إضافي.' },
+  { ticker:'CLHO', name:'سيتي لاونج للضيافة', sector:'سياحة', signal:'hold', conf:54, support:'5.00', resist:'7.00', change:'-0.7%', rsi:45, analysis:'السياحة في تعافٍ. الضيافة الراقية تستفيد من زيادة السياح الأجانب.' },
+  { ticker:'COSG', name:'كوزموس للغاز', sector:'طاقة', signal:'buy', conf:68, support:'3.50', resist:'5.00', change:'+1.0%', rsi:53, analysis:'توزيع الغاز قطاع مستقر وضروري. نمو متوقع مع توسع شبكة الغاز الطبيعي.' },
+  { ticker:'EAIT', name:'مصر لتقنية المعلومات', sector:'تقنية', signal:'buy', conf:70, support:'5.00', resist:'7.00', change:'+1.3%', rsi:54, analysis:'التحول الرقمي الحكومي محرك قوي. الطلب على خدمات الـ IT في تصاعد.' },
+  { ticker:'ECAP', name:'مصر للتمويل', sector:'مال', signal:'hold', conf:52, support:'3.80', resist:'5.20', change:'-0.4%', rsi:46, analysis:'تمويل متنوع. أداء متوسط. الانتظار حتى تتضح نتائج الأعمال القادمة.' },
+  { ticker:'ECMI', name:'السمنت المصرية', sector:'مواد بناء', signal:'buy', conf:69, support:'14.00', resist:'18.00', change:'+0.9%', rsi:53, analysis:'الطلب على الإسمنت مرتفع مع مشاريع البنية التحتية الكبرى.' },
+  { ticker:'EFID', name:'إيديتا للصناعات الغذائية', sector:'غذاء', signal:'sell', conf:60, support:'24.00', resist:'30.00', change:'-2.76%', rsi:38, analysis:'ضغط بيعي ملحوظ. تكاليف المواد الخام وتراجع القوة الشرائية يضغطان على الأرباح.' },
+  { ticker:'EGBE', name:'مصر للسياحة', sector:'سياحة', signal:'hold', conf:55, support:'3.00', resist:'4.50', change:'-0.5%', rsi:47, analysis:'السياحة تتعافى تدريجياً. إيرادات الدولار دعم قوي عند تحسن الحجوزات.' },
+  { ticker:'EGTS', name:'الغازات المصرية', sector:'طاقة', signal:'buy', conf:72, support:'8.00', resist:'11.00', change:'+1.2%', rsi:55, analysis:'غازات صناعية طلبها متنامٍ مع توسع القطاع الصناعي. تدفق نقدي مستقر.' },
+  { ticker:'EHDR', name:'الإسكندرية للحاويات', sector:'لوجستيات', signal:'hold', conf:55, support:'5.00', resist:'7.00', change:'-0.3%', rsi:48, analysis:'الميناء الاستراتيجي أصل قوي. حجم التداول التجاري محدد رئيسي للأداء.' },
+  { ticker:'EKHO', name:'إيكو للبلاستيك', sector:'صناعة', signal:'hold', conf:52, support:'4.00', resist:'5.50', change:'-0.6%', rsi:45, analysis:'تكاليف البتروكيماويات تضغط على الهامش. الطلب المحلي متوسط.' },
+  { ticker:'ELKA', name:'الكا للكيماويات', sector:'كيماويات', signal:'hold', conf:53, support:'5.50', resist:'7.50', change:'-0.5%', rsi:46, analysis:'قطاع الكيماويات يحتاج استقرار الأسعار العالمية لتحسن الهامش.' },
+  { ticker:'EMFD', name:'مصر للصناعات الغذائية', sector:'غذاء', signal:'hold', conf:56, support:'3.50', resist:'5.00', change:'-0.4%', rsi:47, analysis:'غذاء أساسي بطلب مستقر. الهامش محدود لكن المخاطرة منخفضة.' },
+  { ticker:'ENGC', name:'مصر للغاز', sector:'طاقة', signal:'buy', conf:74, support:'6.00', resist:'8.50', change:'+1.5%', rsi:56, analysis:'توزيع الغاز الطبيعي قطاع حيوي ومحمي. نمو شبه مضمون مع التوسع السكاني.' },
+  { ticker:'EOSB', name:'شرق دلتا للزيوت', sector:'غذاء', signal:'hold', conf:52, support:'4.00', resist:'5.80', change:'-0.5%', rsi:46, analysis:'أسعار الزيوت متذبذبة عالمياً. الهامش غير مستقر.' },
+  { ticker:'ESRS', name:'السويس للصلب', sector:'معادن', signal:'sell', conf:63, support:'4.50', resist:'6.00', change:'-2.0%', rsi:38, analysis:'الصلب يواجه ضغطاً من المنافسة والواردات. الهامش تحت الضغط.' },
+  { ticker:'EXPA', name:'إكسبا للتصدير', sector:'تجارة', signal:'hold', conf:54, support:'3.00', resist:'4.50', change:'-0.3%', rsi:47, analysis:'التصدير يستفيد من سعر الصرف. الأداء مرتبط بالطلب الخارجي.' },
+  { ticker:'FAITA', name:'مجموعة فايتا', sector:'غذاء', signal:'hold', conf:55, support:'5.50', resist:'7.50', change:'-0.4%', rsi:48, analysis:'تنويع في منتجات الغذاء يدعم الاستقرار. الهامش تحت ضغط التضخم.' },
+  { ticker:'GBCO', name:'جلوبال للأوراق المالية', sector:'مال', signal:'hold', conf:52, support:'3.50', resist:'5.00', change:'-0.5%', rsi:46, analysis:'سمسرة وخدمات مالية. الأداء يتبع نشاط البورصة بشكل مباشر.' },
+  { ticker:'GDWA', name:'جودة للمياه', sector:'مياه', signal:'buy', conf:68, support:'4.50', resist:'6.50', change:'+0.8%', rsi:53, analysis:'قطاع المياه ضروري ومحمي. التوسع في محطات المعالجة يدعم النمو.' },
+  { ticker:'GGCC', name:'الخليج المصري للغاز', sector:'طاقة', signal:'buy', conf:70, support:'7.00', resist:'9.50', change:'+1.1%', rsi:54, analysis:'الغاز الطبيعي دعم حكومي قوي. الطلب المتزايد مع التوسع العمراني.' },
+  { ticker:'GSSC', name:'جلف ستيل', sector:'معادن', signal:'sell', conf:60, support:'5.00', resist:'7.00', change:'-1.8%', rsi:39, analysis:'أسعار الصلب العالمية ضاغطة. المنافسة من الواردات تضغط على الهامش.' },
+  { ticker:'HELI', name:'هيلان للاستثمار', sector:'مال', signal:'hold', conf:52, support:'3.00', resist:'4.50', change:'-0.4%', rsi:47, analysis:'محفظة متنوعة. الأداء الكلي للسوق هو المحرك الأساسي.' },
+  { ticker:'IBCT', name:'الإسكندرية للبيئة', sector:'بيئة', signal:'hold', conf:54, support:'4.00', resist:'6.00', change:'-0.3%', rsi:48, analysis:'البيئة والاستدامة قطاع ناشئ. دعم حكومي متزايد لكن التطبيق بطيء.' },
+  { ticker:'ICFC', name:'إنتركونتيننتال للمالية', sector:'مال', signal:'hold', conf:52, support:'5.00', resist:'7.00', change:'-0.5%', rsi:46, analysis:'تمويل متنوع. أداء مستقر لكن دون نمو لافت.' },
+  { ticker:'IDRE', name:'أيديا للعقارات', sector:'عقارات', signal:'hold', conf:54, support:'3.50', resist:'5.00', change:'-0.6%', rsi:45, analysis:'عقارات تجارية وسكنية. الطلب موجود لكن التمويل العقاري تحدٍّ.' },
+  { ticker:'IRAX', name:'إيراكس للصناعة', sector:'صناعة', signal:'hold', conf:52, support:'4.00', resist:'5.50', change:'-0.4%', rsi:46, analysis:'صناعة عامة. الأداء مرتبط بحالة الاقتصاد الكلي.' },
+  { ticker:'IRON', name:'الحديد والصلب المصرية', sector:'معادن', signal:'sell', conf:65, support:'2.50', resist:'3.50', change:'-2.2%', rsi:37, analysis:'صناعة الصلب تعاني من ضغط المنافسة. الأسعار العالمية وتكاليف الطاقة تضغطان على الهامش.' },
+  { ticker:'ISMQ', name:'إسماعيل للأقمشة', sector:'نسيج', signal:'sell', conf:60, support:'2.00', resist:'3.00', change:'-1.5%', rsi:38, analysis:'قطاع النسيج يواجه منافسة شديدة. هامش الربح ضيق والطلب محلي محدود.' },
+  { ticker:'KABO', name:'كابو للمشروبات', sector:'غذاء', signal:'hold', conf:55, support:'5.00', resist:'7.00', change:'-0.5%', rsi:47, analysis:'المشروبات قطاع استهلاكي دفاعي. التوزيع الجغرافي الواسع ميزة تنافسية.' },
+  { ticker:'MCQE', name:'المصريون للأوراق المالية', sector:'مال', signal:'hold', conf:52, support:'3.50', resist:'5.00', change:'-0.4%', rsi:46, analysis:'سمسرة وأوراق مالية. الأداء مرتبط بحجم التداول في البورصة.' },
+  { ticker:'MENA', name:'ميدل إيست للاستثمار', sector:'مال', signal:'hold', conf:52, support:'4.00', resist:'5.80', change:'-0.3%', rsi:47, analysis:'استثمارات إقليمية متنوعة. الأداء يتبع حالة الأسواق الناشئة.' },
+  { ticker:'MICH', name:'ميشلان مصر', sector:'صناعة', signal:'hold', conf:55, support:'8.00', resist:'11.00', change:'-0.4%', rsi:48, analysis:'إطارات وصناعة. الطلب مرتبط بقطاع السيارات والنقل.' },
+  { ticker:'MILS', name:'إيجيبت ميلز', sector:'غذاء', signal:'hold', conf:55, support:'4.50', resist:'6.50', change:'-0.5%', rsi:47, analysis:'طحن وغذاء أساسي. طلب مستقر لكن هامش الربح محدود بفعل الدعم الحكومي.' },
+  { ticker:'MOED', name:'مصر للتعدين', sector:'معادن', signal:'hold', conf:53, support:'3.00', resist:'4.50', change:'-0.7%', rsi:45, analysis:'تعدين محلي. يحتاج أسعار معادن عالمية مواتية لتحقيق نمو ملحوظ.' },
+  { ticker:'NCCW', name:'الكابلات الوطنية', sector:'صناعة', signal:'hold', conf:54, support:'6.00', resist:'8.50', change:'-0.5%', rsi:47, analysis:'كابلات وأسلاك. الطلب مرتبط بمشاريع البنية التحتية الكهربائية.' },
+  { ticker:'NCMG', name:'نايل سمنت', sector:'مواد بناء', signal:'buy', conf:68, support:'5.00', resist:'7.00', change:'+0.9%', rsi:53, analysis:'الطلب على الإسمنت مرتفع. مشاريع البناء الحكومية الكبرى تدعم المبيعات.' },
+  { ticker:'NEDA', name:'نيدا للإنشاءات', sector:'تشييد', signal:'hold', conf:54, support:'4.50', resist:'6.50', change:'-0.4%', rsi:47, analysis:'إنشاءات متنوعة. المشاريع الحكومية المحرك الأساسي للإيرادات.' },
+  { ticker:'NINH', name:'النيل للفنادق', sector:'سياحة', signal:'buy', conf:67, support:'3.50', resist:'5.00', change:'+0.7%', rsi:52, analysis:'الفنادق تستفيد من عودة السياحة. الموقع على النيل أصل سياحي مميز.' },
+  { ticker:'OCDI', name:'أوكا للتنمية', sector:'عقارات', signal:'hold', conf:52, support:'3.00', resist:'4.50', change:'-0.5%', rsi:46, analysis:'تطوير عقاري متنوع. الطلب على الوحدات السكنية قائم لكن التمويل عائق.' },
+  { ticker:'OIH', name:'النيل للكيماويات', sector:'كيماويات', signal:'hold', conf:53, support:'4.50', resist:'6.50', change:'-0.4%', rsi:47, analysis:'كيماويات صناعية. الطلب متنوع من قطاعات مختلفة.' },
+  { ticker:'PACH', name:'باك للتغليف', sector:'صناعة', signal:'hold', conf:54, support:'3.00', resist:'4.50', change:'-0.5%', rsi:46, analysis:'تغليف ومواد. الطلب مرتبط بنشاط قطاع الغذاء والصناعة.' },
+  { ticker:'PHAR', name:'مصر للصناعات الدوائية', sector:'أدوية', signal:'buy', conf:73, support:'9.00', resist:'12.00', change:'+1.0%', rsi:55, analysis:'صناعة دوائية قوية. الطلب المحلي والتصدير يدعمان النمو المستدام.' },
+  { ticker:'POUL', name:'قها للدواجن', sector:'غذاء', signal:'hold', conf:55, support:'5.00', resist:'7.00', change:'-0.6%', rsi:47, analysis:'الدواجن قطاع استهلاكي مهم. تكاليف الأعلاف تحدٍّ مستمر على الهامش.' },
+  { ticker:'PRDC', name:'إنبي', sector:'بترول', signal:'buy', conf:72, support:'11.00', resist:'14.50', change:'+1.3%', rsi:55, analysis:'البترول والطاقة قطاع استراتيجي. الأسعار العالمية تدعم الأداء.' },
+  { ticker:'RMDA', name:'رمضان للمقاولات', sector:'تشييد', signal:'hold', conf:53, support:'4.00', resist:'5.80', change:'-0.5%', rsi:46, analysis:'مقاولات عامة. المشاريع الحكومية المصدر الأساسي للإيرادات.' },
+  { ticker:'RUBX', name:'روبكس للكيماويات', sector:'كيماويات', signal:'hold', conf:52, support:'3.50', resist:'5.00', change:'-0.4%', rsi:47, analysis:'كيماويات متخصصة. الطلب الصناعي المحرك الأساسي.' },
+  { ticker:'SAIB', name:'بنك الاستثمار العربي', sector:'بنوك', signal:'buy', conf:70, support:'3.50', resist:'5.00', change:'+0.8%', rsi:53, analysis:'بنك متوسط في مرحلة نمو. سياسات الإقراض المحسّنة تدعم الربحية.' },
+  { ticker:'SCEM', name:'شركاء الإسمنت', sector:'مواد بناء', signal:'buy', conf:68, support:'4.50', resist:'6.50', change:'+0.7%', rsi:52, analysis:'إسمنت. المشاريع الكبرى تستمر في دعم الطلب على المدى المتوسط.' },
+  { ticker:'SDTI', name:'صدى للاتصالات', sector:'اتصالات', signal:'hold', conf:54, support:'3.00', resist:'4.50', change:'-0.4%', rsi:47, analysis:'اتصالات ومعلوماتية. القطاع تنافسي لكن الطلب على البيانات متنامٍ.' },
+  { ticker:'SKPC', name:'سيدي كرير للبتروكيماويات', sector:'بتروكيماويات', signal:'buy', conf:75, support:'18.00', resist:'24.00', change:'+1.5%', rsi:57, analysis:'بتروكيماويات بهامش ربح جيد. الطلب الصناعي والتصدير يدعمان النمو.' },
+  { ticker:'SNFC', name:'سينوفكس للدواء', sector:'أدوية', signal:'buy', conf:71, support:'7.00', resist:'9.50', change:'+0.9%', rsi:54, analysis:'أدوية جنيسة بطلب متزايد. التصنيع المحلي أولوية حكومية داعمة للقطاع.' },
+  { ticker:'UASG', name:'اليونايتد للخدمات', sector:'خدمات', signal:'hold', conf:53, support:'4.00', resist:'5.80', change:'-0.4%', rsi:47, analysis:'خدمات متنوعة. الأداء مرتبط بالنشاط الاقتصادي العام.' },
+  { ticker:'UTOP', name:'يوتوب للاستثمار', sector:'مال', signal:'hold', conf:51, support:'3.50', resist:'5.00', change:'-0.3%', rsi:48, analysis:'استثمارات متنوعة. أداء محايد في انتظار محفز واضح.' },
+  { ticker:'VERT', name:'فيرتكس للاستثمار', sector:'مال', signal:'hold', conf:52, support:'4.00', resist:'5.80', change:'-0.4%', rsi:47, analysis:'استثمارات وأوراق مالية. الأداء يتبع حركة السوق الكلية.' },
+  { ticker:'WKOL', name:'وادي كوم أمبو', sector:'زراعة', signal:'buy', conf:67, support:'3.00', resist:'4.50', change:'+0.6%', rsi:52, analysis:'زراعة وتوطين. قطاع الغذاء الاستراتيجي يحظى بدعم حكومي متزايد.' },
+  { ticker:'ZEOT', name:'زيوت مصر', sector:'كيماويات', signal:'hold', conf:53, support:'4.50', resist:'6.50', change:'-0.5%', rsi:46, analysis:'زيوت تشحيم وكيماويات. الطلب الصناعي محرك رئيسي.' },
+];
+
+function signalLabel(s) {
+  if (s==='buy')  return '🟢 توقع صعود';
+  if (s==='sell') return '🔴 توقع هبوط';
+  return '⚪ محايد';
+}
+
+function renderCard(s) {
+  const changeNum = parseFloat(s.change);
+  const changeDir = changeNum > 0 ? 'up' : changeNum < 0 ? 'down' : 'neutral';
+  const confPct = s.conf;
+
+  return `
+  <div class="card ${s.signal}" data-signal="${s.signal}" data-ticker="${s.ticker}" data-name="${s.name}">
+    <div class="card-header">
+      <span class="ticker">${s.ticker}</span>
+      <span class="sector-tag">${s.sector}</span>
+    </div>
+    <div class="company-name">${s.name}</div>
+    <div class="signal ${s.signal}">${signalLabel(s.signal)}</div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-label">التغيّر</div>
+        <div class="stat-val ${changeDir}">${s.change}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">RSI</div>
+        <div class="stat-val ${s.rsi>55?'up':s.rsi<45?'down':'neutral'}">${s.rsi}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">الثقة</div>
+        <div class="stat-val ${s.signal==='buy'?'up':s.signal==='sell'?'down':'neutral'}">${confPct}%</div>
+      </div>
+    </div>
+
+    <div class="targets">
+      <div class="target-box support">
+        <div class="tb-lbl">دعم 🛡️</div>
+        <div class="tb-val">${s.support}</div>
+      </div>
+      <div class="target-box resist">
+        <div class="tb-lbl">مقاومة 🎯</div>
+        <div class="tb-val">${s.resist}</div>
+      </div>
+    </div>
+
+    <div class="bar-row">
+      <span>قوة الإشارة</span>
+      <div class="bar-track">
+        <div class="bar-fill ${s.signal}" style="width:${confPct}%"></div>
+      </div>
+      <span>${confPct}%</span>
+    </div>
+
+    <div class="analysis">${s.analysis}</div>
+
+    <div class="card-footer">
+      <div class="price-row">
+        <span class="price-lbl">💰 السعر الحالي (ج.م)</span>
+        <input class="price-input" type="number" step="0.01"
+          placeholder="أدخل السعر"
+          id="price-${s.ticker}"
+          oninput="savePrice('${s.ticker}', this.value)" />
+      </div>
+      <div class="links-row">
+        <a class="tv-btn" style="flex:1" href="https://www.tradingview.com/symbols/EGX-${s.ticker}/" target="_blank">📊 عرض الشارت على TradingView</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+let currentFilter = 'all';
+
+// ── PRICE STORAGE ──
+const prices = {};
+function savePrice(ticker, val) {
+  prices[ticker] = val;
+}
+function restorePrices() {
+  Object.entries(prices).forEach(([ticker, val]) => {
+    const el = document.getElementById('price-' + ticker);
+    if (el && val) el.value = val;
+  });
+}
+
+function updateHeaderStats() {
+  const bull = stocks.filter(s=>s.signal==='buy').length;
+  const bear = stocks.filter(s=>s.signal==='sell').length;
+  const hold = stocks.filter(s=>s.signal==='hold').length;
+  document.getElementById('bull-count').textContent = bull;
+  document.getElementById('bear-count').textContent = bear;
+  document.getElementById('hold-count').textContent = hold;
+  document.getElementById('total-count').textContent = stocks.length;
+}
+
+function renderAll(list) {
+  document.getElementById('grid').innerHTML = list.map(renderCard).join('');
+  updateHeaderStats();
+  restorePrices();
+}
+
+function filterBy(sig, btn) {
+  currentFilter = sig;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function filterCards() { applyFilters(); }
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = stocks.filter(s => {
+    const matchSig = currentFilter === 'all' || s.signal === currentFilter;
+    const matchQ = !q || s.ticker.toLowerCase().includes(q) || s.name.includes(q) || s.sector.includes(q);
+    return matchSig && matchQ;
+  });
+  renderAll(filtered);
+}
+
+renderAll(stocks);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
